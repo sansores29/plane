@@ -1,0 +1,33 @@
+name: Build Plane Web
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'apps/web/**'
+      - '.github/workflows/plane-web.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: sansores29
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push plane-web
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/web/Dockerfile.web
+          push: true
+          tags: sansores29/plane-web:0.23.1
